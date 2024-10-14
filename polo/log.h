@@ -13,9 +13,6 @@
 
 namespace polo
 {
-    class Logger;
-    class LoggerManager;
-
     // 日志级别
     class LogLevel
     {
@@ -96,6 +93,7 @@ namespace polo
     private:
         LogEvent::ptr m_event;
     };
+
     // 日志格式化
     class LogFormatter
     {
@@ -105,12 +103,38 @@ namespace polo
         // 注意定义log格式
         LogFormatter(const std::string &pattern);
     };
+
     // 日志输出目标
-    class LogAppender;
-    class StdoutLogAppender; /// 子类：控制台输出
-    class FileLogAppender;   /// 子类：文件输出
+    class LogAppender
+    {
+    public:
+        using ptr = std::shared_ptr<LogFormatter>;
+        std::string format(LogEvent::ptr event);
+
+    private:
+    };
+
+    /// 子类：控制台输出
+    class StdoutLogAppender : public LogAppender
+    {
+        
+    };
+    class FileLogAppender; /// 子类：文件输出
+
     // 日志器
-    class Logger;
+    class Logger
+    {
+    public:
+        using ptr = std::shared_ptr<LogEvent>;
+        using str = std::string;
+        Logger(const str &name = "root");
+        void Log(LogLevel::Level level, LogEvent::ptr event);
+
+    private:
+        str m_name;
+        LogLevel::Level m_level;
+        LogAppender::ptr
+    };
     // 日志管理类
     class LoggerManager;
 };
